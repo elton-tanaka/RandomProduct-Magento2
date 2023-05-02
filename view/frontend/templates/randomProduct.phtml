@@ -1,0 +1,42 @@
+<?php
+const PARAM_NAME_URL_ENCODED = 'uenc';
+use Magento\Framework\App\Action\Action;
+$product = $this->getRandomProduct();
+?>
+<div class="block task-product">
+    <div class="block-title">
+        <strong><?= $this->helper->getBlockTitle() ?></strong>
+    </div>
+    <div class="block-content">
+        <div class="product-image">
+            <a href="<?= $product->getProductUrl() ?>">
+                <img src="<?= $this->escapeUrl($product->getImageUrl()) ?>" alt="<?= $this->escapeHtml($product->getName()) ?>">
+            </a>
+        </div>
+        <div class="product-details">
+            <h2 class="product-name"><?= $this->escapeHtml($product->getName()) ?></h2>
+            <div class="product-price">
+                <?= $this->getProductPrice($product) ?>
+            </div>
+            <?php if ($this->helper->getRedirectToCheckoutConfig()) : ?>
+                <div class="product-actions">
+                    <button type="button" onclick="window.location.href='<?php echo $this->getUrl('testtask/product/addtocartandcheckout/', ['product_id' => $product->getId()]); ?>'">
+                        <?php echo __('Buy') ?>
+                    </button>
+                </div>
+            <?php else: ?>
+                <?php $postParams = $this->getAddToCartPostParams($product); ?>
+                <form data-role="tocart-form" action="<?= $postParams['action']; ?>" method="post">
+                    <input type="hidden" name="product" value="<?= $postParams['data']['product']; ?>">
+                    <input type="hidden" name="<?= Action::PARAM_NAME_URL_ENCODED; ?>" value="<?= $postParams['data'][Action::PARAM_NAME_URL_ENCODED]; ?>">
+                    <?php echo $this->getBlockHtml('formkey')?>
+                    <button type="submit"
+                            title="<?php echo $this->escapeHtml(__('Buy')); ?>"
+                            class="action tocart primary">
+                        <span><?= __('Buy') ?></span>
+                    </button>
+                </form>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
